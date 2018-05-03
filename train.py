@@ -51,7 +51,7 @@ print('[i] Checkpoint interval:  ', args.checkpoint_interval)
 args.name = args.name + "_" + str(int(time.time() * 10000000))
 print(args.name)
 try:
-    print('[i] Creating directory {}...'.format(args.name))
+    print('[i] Creating directory {0}...'.format(args.name))
     os.makedirs(args.name)
 except OSError:
     print("DIR exists error!")
