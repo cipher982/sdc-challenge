@@ -184,7 +184,7 @@ with tf.Session() as sess:
         #-----------------------------------------------------------------------
         # Write image summary every 5 epochs
         #-----------------------------------------------------------------------
-        if e % 5 == 0:
+        if e % 2 == 0:
             imgs_inferred = draw_labels_batch(imgs, img_labels, label_colors)
             imgs_gt       = draw_labels_batch(imgs, img_labels_gt, label_colors)
 
