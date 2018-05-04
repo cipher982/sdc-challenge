@@ -5,3 +5,6 @@ test_source.py
 test_upscale.py
 *__pycache*
 *.ipynb_ch*
+*.zip
+tb
+vgg_graph

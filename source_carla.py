@@ -18,40 +18,38 @@ from glob import glob
 #-------------------------------------------------------------------------------
 Label = namedtuple('Label', ['name', 'color'])
 
+def rgb2bgr(tpl):
+    return (tpl[2], tpl[1], tpl[0])
+
 label_defs = [
-    Label('None'          ,(0, 0,  0)),
-    Label('Buildings'     ,(0, 0,  1)),
-    Label('Fences'        ,(0, 0,  2)),
-    Label('Other'         ,(0, 0,  3)),
-    Label('Pedestrians'   ,(0, 0,  4)),
-    Label('Poles'         ,(0, 0,  5)),
-    Label('RoadLines'     ,(0, 0,  6)),
-    Label('Roads'         ,(0, 0,  7)),
-    Label('Sidewalks'     ,(0, 0,  8)),
-    Label('Vegetation'    ,(0, 0,  9)),
-    Label('Vehicles'      ,(0, 0, 10)),
-    Label('Walls'         ,(0, 0, 11)),
-    Label('TrafficSigns'  ,(0, 0, 12))
+    Label('None'          ,rgb2bgr((0, 0,  0))),
+    Label('Buildings'     ,rgb2bgr((0, 0,  1))),
+    Label('Fences'        ,rgb2bgr((0, 0,  2))),
+    Label('Other'         ,rgb2bgr((0, 0,  3))),
+    Label('Pedestrians'   ,rgb2bgr((0, 0,  4))),
+    Label('Poles'         ,rgb2bgr((0, 0,  5))),
+    Label('RoadLines'     ,rgb2bgr((0, 0,  6))),
+    Label('Roads'         ,rgb2bgr((0, 0,  7))),
+    Label('Sidewalks'     ,rgb2bgr((0, 0,  8))),
+    Label('Vegetation'    ,rgb2bgr((0, 0,  9))),
+    Label('Vehicles'      ,rgb2bgr((0, 0, 10))),
+    Label('Walls'         ,rgb2bgr((0, 0, 11))),
+    Label('TrafficSigns'  ,rgb2bgr((0, 0, 12)))
     ]
 
 #-------------------------------------------------------------------------------
-def build_file_list(images_root, labels_root, sample_name):
-    image_sample_root = images_root + '/' + sample_name
-    image_root_len    = len(image_sample_root)
-    label_sample_root = labels_root + '/' + sample_name
-    image_files       = glob(image_sample_root + '/**/*png')
+def build_file_list(images_root, labels_root):
+    image_root_len    = len(images_root)
+    image_files       = images_root
     file_list         = []
     for f in image_files:
-        f_relative      = f[image_root_len:]
-        f_dir           = os.path.dirname(f_relative)
-        f_base          = os.path.basename(f_relative)
-        f_label   = label_sample_root + f_dir + '/' + f_base_gt
-        if os.path.exists(f_label):
-            file_list.append((f, f_label))
+        whichImage = f.rsplit('\\', 1)[-1]
+        f_label    = labels_root + '\\' + whichImage
+        file_list.append((f, f_label))
     return file_list
 
 #-------------------------------------------------------------------------------
-class CityscapesSource:
+class CarlaSource:
     #---------------------------------------------------------------------------
     def __init__(self):
         self.image_size      = (800, 600)
@@ -73,8 +71,8 @@ class CityscapesSource:
         :param valid_fraction: what franction of the dataset should be used
                                as a validation sample
         """
-        images_root = data_dir + '/Train/CameraSeg'
-        labels_root = data_dir + '/Train/CameraRGB'
+        images_root = 'D:\\data\\lyft\\Train\\CameraSeg'
+        labels_root = 'D:\\data\\lyft\\Train\\CameraRGB'
 
         train_images = build_file_list(images_root, labels_root, 'train')
         valid_images = build_file_list(images_root, labels_root, 'val')
@@ -97,15 +95,14 @@ class CityscapesSource:
                                as a validation sample
         """
         images = data_dir + '\\Train\\CameraSeg\\*.png'
-        labels = data_dir + '\\Train\\CameraRGB\\*.png'
+        labels = data_dir + '\\Train\\CameraRGB'
         #print(images)
 
         image_paths = glob(images)
-        #print(image_paths)
-        label_paths = {
-            os.path.basename(path).replace('', ''): path
-            for path in glob(labels)}
-        self.label_paths = label_paths
+        label_paths = labels
+        #self.label_paths = label_paths
+
+        image_paths = build_file_list(image_paths, label_paths)
 
         num_images = len(image_paths)
         if num_images == 0:
@@ -115,10 +112,9 @@ class CityscapesSource:
         valid_images = image_paths[:int(valid_fraction*num_images)]
         train_images = image_paths[int(valid_fraction*num_images):]
 
-
+        self.num_classes     = 13
         self.num_training    = len(train_images)
         self.num_validation  = len(valid_images)
-        self.num_classes     = 13
         self.train_generator = self.batch_generator(train_images)
         self.valid_generator = self.batch_generator(valid_images)       
 
@@ -134,11 +130,18 @@ class CityscapesSource:
                 names_images = []
                 names_labels = []
                 for f in files:
+                    #print("f:{0}  shape:{1}".format(f,np.shape(f)))
+                    #print("f[0]:{0}  f[1]:{1}".format(f[0],f[1]))
                     image_file = f[0]
                     label_file = f[1]
 
-                    image = cv2.resize(cv2.imread(image_file), self.image_size)
-                    label = cv2.resize(cv2.imread(label_file), self.image_size)
+                    #print("loading image. . .")
+                    image = cv2.imread(image_file)
+                    label = cv2.imread(label_file)
+
+                    #print("Resizing image. . .")
+                    image = cv2.resize(image, self.image_size)
+                    label = cv2.resize(label, self.image_size)
 
                     label_bg   = np.zeros([image.shape[0], image.shape[1]], dtype=bool)
                     label_list = []
@@ -167,4 +170,4 @@ class CityscapesSource:
 
 #-------------------------------------------------------------------------------
 def get_source():
-    return CityscapesSource()
+    return CarlaSource()
