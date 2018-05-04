@@ -52,7 +52,7 @@ def build_file_list(images_root, labels_root):
 class CarlaSource:
     #---------------------------------------------------------------------------
     def __init__(self):
-        self.image_size      = (800, 600)
+        self.image_size      = (416, 320)
         self.num_classes     = len(label_defs)
 
         self.label_colors    = {i: np.array(l.color) for i, l \
