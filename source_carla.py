@@ -37,6 +37,22 @@ label_defs = [
     Label('TrafficSigns'  ,rgb2bgr((0, 0, 12)))
     ]
 
+label_defs = [
+    Label('None'          ,(0, 0,  0)),
+    Label('Buildings'     ,(0, 0,  1)),
+    Label('Fences'        ,(0, 0,  2)),
+    Label('Other'         ,(0, 0,  3)),
+    Label('Pedestrians'   ,(0, 0,  4)),
+    Label('Poles'         ,(0, 0,  5)),
+    Label('RoadLines'     ,(0, 0,  6)),
+    Label('Roads'         ,(0, 0,  7)),
+    Label('Sidewalks'     ,(0, 0,  8)),
+    Label('Vegetation'    ,(0, 0,  9)),
+    Label('Vehicles'      ,(0, 0, 10)),
+    Label('Walls'         ,(0, 0, 11)),
+    Label('TrafficSigns'  ,(0, 0, 12))
+    ]
+
 #-------------------------------------------------------------------------------
 def build_file_list(images_root, labels_root):
     image_root_len    = len(images_root)
@@ -64,29 +80,6 @@ class CarlaSource:
         self.valid_generator = None
 
     #---------------------------------------------------------------------------
-    def load_data(self, data_dir, valid_fraction):
-        """
-        Load the data and make the generators
-        :param data_dir:       the directory where the dataset's file are stored
-        :param valid_fraction: what franction of the dataset should be used
-                               as a validation sample
-        """
-        images_root = 'D:\\data\\lyft\\Train\\CameraSeg'
-        labels_root = 'D:\\data\\lyft\\Train\\CameraRGB'
-
-        train_images = build_file_list(images_root, labels_root, 'train')
-        valid_images = build_file_list(images_root, labels_root, 'val')
-
-        if len(train_images) == 0:
-            raise RuntimeError('No training images found in ' + data_dir)
-        if len(valid_images) == 0:
-            raise RuntimeError('No validation images found in ' + data_dir)
-
-        self.num_training    = len(train_images)
-        self.num_validation  = len(valid_images)
-        self.train_generator = self.batch_generator(train_images)
-        self.valid_generator = self.batch_generator(valid_images)
-
     def load_data(self, data_dir, valid_fraction):
         """
         Load the data and make the generators

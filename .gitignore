@@ -9,3 +9,4 @@ test_upscale.py
 tb
 vgg_graph
 test*
+infer/
