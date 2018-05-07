@@ -22,19 +22,19 @@ def rgb2bgr(tpl):
     return (tpl[2], tpl[1], tpl[0])
 
 label_defs = [
-    Label('None'          ,rgb2bgr((0, 0,  0))),
-    Label('Buildings'     ,rgb2bgr((0, 0,  1))),
-    Label('Fences'        ,rgb2bgr((0, 0,  2))),
-    Label('Other'         ,rgb2bgr((0, 0,  3))),
-    Label('Pedestrians'   ,rgb2bgr((0, 0,  4))),
-    Label('Poles'         ,rgb2bgr((0, 0,  5))),
-    Label('RoadLines'     ,rgb2bgr((0, 0,  6))),
-    Label('Roads'         ,rgb2bgr((0, 0,  7))),
-    Label('Sidewalks'     ,rgb2bgr((0, 0,  8))),
-    Label('Vegetation'    ,rgb2bgr((0, 0,  9))),
-    Label('Vehicles'      ,rgb2bgr((0, 0, 10))),
-    Label('Walls'         ,rgb2bgr((0, 0, 11))),
-    Label('TrafficSigns'  ,rgb2bgr((0, 0, 12)))
+    Label('None'          ,(0, 0,  0)),
+    Label('Buildings'     ,(0, 0,  1)),
+    Label('Fences'        ,(0, 0,  2)),
+    Label('Other'         ,(0, 0,  3)),
+    Label('Pedestrians'   ,(0, 0,  4)),
+    Label('Poles'         ,(0, 0,  5)),
+    Label('RoadLines'     ,(0, 0,  6)),
+    Label('Roads'         ,(0, 0,  7)),
+    Label('Sidewalks'     ,(0, 0,  8)),
+    Label('Vegetation'    ,(0, 0,  9)),
+    Label('Vehicles'      ,(0, 0, 10)),
+    Label('Walls'         ,(0, 0, 11)),
+    Label('TrafficSigns'  ,(0, 0, 12))
     ]
 
 label_defs = [
@@ -122,7 +122,7 @@ class CarlaSource:
                 labels = []
                 names_images = []
                 names_labels = []
-                for f in files:
+                for i, f in enumerate(files):
                     #print("f:{0}  shape:{1}".format(f,np.shape(f)))
                     #print("f[0]:{0}  f[1]:{1}".format(f[0],f[1]))
                     image_file = f[0]
@@ -142,6 +142,10 @@ class CarlaSource:
                         label_current  = np.all(label == ldef.color, axis=2)
                         label_bg      |= label_current
                         label_list.append(label_current)
+                        if ldef.name == 'Vehicles':
+                            print("======================== {0}".format(f))
+                            print("label_current:{0}".format(sum(label_current)))
+                            print("ldef:{0}  color:{1}".format(ldef,ldef.color))
 
                     label_bg   = ~label_bg
                     label_all  = np.dstack([label_bg, *label_list])

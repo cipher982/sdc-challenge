@@ -83,6 +83,7 @@ except (ImportError, AttributeError, RuntimeError) as e:
 # exists
 #-------------------------------------------------------------------------------
 samples = glob(args.samples_dir + '/*.png')
+print("Inferring on {0} sample images. . .".format(len(samples)))
 if len(samples) == 0:
     print('[!] No input samples found in', args.samples_dir)
     sys.exit(1)
