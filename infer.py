@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #-------------------------------------------------------------------------------
-# Author: Lukasz Janyst <lukasz@jany.st>
-# Date:   15.06.2017
+# Author: Lukasz Janyst <lukasz@jany.st>, David Rose <David010@gmail.com>
+# Date:   2018-05-08
 #-------------------------------------------------------------------------------
 
 import argparse
@@ -11,17 +11,23 @@ import cv2
 import os
 
 import tensorflow as tf
-import numpy as np
+import numpy      as np
 
 from fcnvgg import FCNVGG
-from utils import *
-from glob import glob
-from tqdm import tqdm
+from utils  import *
+from glob   import glob
+from tqdm   import tqdm
+
+# Imports from demo.py in Udacity Workspace
+import sys, skvideo.io, json, base64
+import numpy as np
+from PIL import Image
+from io  import BytesIO, StringIO
 
 #-------------------------------------------------------------------------------
-def sample_generator(samples, image_size, batch_size):
-    for offset in range(0, len(samples), batch_size):
-        files = samples[offset:offset+batch_size]
+def sample_generator(video, image_size, batch_size):
+    for offset in range(0, len(video), batch_size):
+        files = video[offset:offset+batch_size]
         images = []
         names  = []
         for image_file in files:
@@ -42,9 +48,9 @@ parser.add_argument('--samples-dir', default='test',
                     help='directory containing samples to analyse')
 parser.add_argument('--output-dir', default='test-output',
                     help='directory for the resulting images')
-parser.add_argument('--batch-size', type=int, default=20,
+parser.add_argument('--batch-size', type=int, default=10,
                     help='batch size')
-parser.add_argument('--data-source', default='kitti',
+parser.add_argument('--data-source', default='carla',
                     help='data source')
 args = parser.parse_args()
 
