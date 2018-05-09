@@ -19,7 +19,7 @@ import numpy as np
 from PIL import Image
 from io  import BytesIO, StringIO
 
-def sample_generator(video, image_size=(416,320), batch_size=1):
+def sample_generator(video, image_size, batch_size):
     for offset in range(0, len(video), batch_size):
         files = video[offset:offset+batch_size]
         images = []
@@ -55,7 +55,7 @@ args.name        = 'runs\\t3'
 args.checkpoint  = -1
 args.video_file  = 'test_video.mp4'
 args.output_dir  = 'test_output'
-args.batch_size  = 1
+args.batch_size  = 31
 args.data_source = 'carla'
 
 
@@ -97,8 +97,8 @@ with tf.Session() as sess:
     #---------------------------------------------------------------------------
     # Process the images
     #---------------------------------------------------------------------------
-    #generator = sample_generator(video, source.image_size, args.batch_size)
-    generator = sample_generator(video)
+    generator = sample_generator(video, source.image_size, args.batch_size)
+    #generator = sample_generator(video, image_size=args.image_size)
 
     n_sample_batches = int(math.ceil(len(video)/args.batch_size))
     description = '[i] Processing video'
