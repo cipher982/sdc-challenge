@@ -1,4 +1,5 @@
 import argparse
+import random
 import math
 import sys
 import cv2
@@ -89,6 +90,8 @@ except (ImportError, AttributeError, RuntimeError) as e:
 
 video = skvideo.io.vread(args.video_file)
 
+global imgs
+
 with tf.Session() as sess:
     print('[i] Creating the model...')
     net = FCNVGG(sess)
@@ -98,11 +101,9 @@ with tf.Session() as sess:
     # Process the images
     #---------------------------------------------------------------------------
     generator = sample_generator(video, source.image_size, args.batch_size)
-    #generator = sample_generator(video, image_size=args.image_size)
 
     n_sample_batches = int(math.ceil(len(video)/args.batch_size))
     description = '[i] Processing video'
-
     for x in tqdm(generator, total=n_sample_batches, desc=description, unit='batches'):
         feed = {net.image_input:  x,
                 net.keep_prob:    1}
@@ -110,3 +111,17 @@ with tf.Session() as sess:
 
         #binary_car_result = np.where()
         imgs = draw_labels_batch(x, img_labels, label_colors, False)
+        print("imgs shape: {0},{1}".format(np.shape(imgs), type(imgs)))
+
+for i in range((3)):
+	#print(imgs[i, :, :, :])
+	current_name = 'C:/Users/david/documents/GitHub/sdc_challenge/testtt/' + str(random.randint(1,10001)) + '.png'
+	print('writing: {0}, shape: {1}'.format(current_name, np.shape(imgs[i, :, :, :])))
+	cv2.imwrite(current_name, imgs[i, :, :, :])
+	cv2.imshow(current_name ,imgs[i, :, :, :])
+
+waott = input()
+
+
+
+

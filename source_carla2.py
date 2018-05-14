@@ -8,16 +8,31 @@ import cv2
 import os
 import time
 
-import numpy             as np
-import matplotlib.pyplot as plt
+import numpy as np
 
 from collections import namedtuple
-from glob        import glob
+from glob import glob
 
 #-------------------------------------------------------------------------------
 # Labels
 #-------------------------------------------------------------------------------
 Label = namedtuple('Label', ['name', 'color'])
+
+label_defs = [
+    Label('None'          ,(0, 0,  0)),
+    Label('Buildings'     ,(0, 0,  1)),
+    Label('Fences'        ,(0, 0,  2)),
+    Label('Other'         ,(0, 0,  3)),
+    Label('Pedestrians'   ,(0, 0,  4)),
+    Label('Poles'         ,(0, 0,  5)),
+    Label('RoadLines'     ,(0, 0,  6)),
+    Label('Roads'         ,(0, 0,  7)),
+    Label('Sidewalks'     ,(0, 0,  8)),
+    Label('Vegetation'    ,(0, 0,  9)),
+    Label('Vehicles'      ,(0, 0, 10)),
+    Label('Walls'         ,(0, 0, 11)),
+    Label('TrafficSigns'  ,(0, 0, 12))
+    ]
 
 label_defs = [
     Label('None'          ,(0, 0,  0)),
@@ -117,10 +132,7 @@ class CarlaSource:
                     #print("Resizing image. . .")
                     image = cv2.resize(image, self.image_size)
                     label = cv2.resize(label, self.image_size)
-                    print("===About to imshow===")
-                    plt.imshow(image)
-                    plt.imshow(label)
-                    #break
+
                     label_bg   = np.zeros([image.shape[0], image.shape[1]], dtype=bool)
                     label_list = []
                     for ldef in label_defs[1:]:
@@ -129,7 +141,7 @@ class CarlaSource:
                         label_list.append(label_current)
                         if ldef.name == 'Vehicles':
                             print("======================== {0}".format(f))
-                            print("label_current:{0}".format(sum(label_current)))
+                            print("label shp:{0}".format((np.shape(label_current))))
                             print("ldef:{0}  color:{1}".format(ldef,ldef.color))
 
                     label_bg   = ~label_bg

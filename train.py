@@ -10,30 +10,31 @@ import sys
 import os
 import time
 
-import tensorflow as tf
-import numpy as np
+import tensorflow        as tf
+import numpy             as np
+import matplotlib.pyplot as plt
 
 from fcnvgg import FCNVGG
-from utils import *
-from tqdm import tqdm
+from utils  import *
+from tqdm   import tqdm
 
 #-------------------------------------------------------------------------------
 # Parse the commandline
 #-------------------------------------------------------------------------------
 parser = argparse.ArgumentParser(description='Train the FCN')
-parser.add_argument('--name', default='test',
+parser.add_argument('--name', default='runs/t4',
                     help='project name')
-parser.add_argument('--data-source', default='kitti',
+parser.add_argument('--data-source', default='carla2',
                     help='data source')
-parser.add_argument('--data-dir', default='data',
+parser.add_argument('--data-dir', default='D:\\data\\lyft',
                     help='data directory')
 parser.add_argument('--vgg-dir', default='vgg_graph',
                     help='directory for the VGG-16 model')
-parser.add_argument('--epochs', type=int, default=10,
+parser.add_argument('--epochs', type=int, default=3,
                     help='number of training epochs')
-parser.add_argument('--batch-size', type=int, default=20,
+parser.add_argument('--batch-size', type=int, default=1,
                     help='batch size')
-parser.add_argument('--tensorboard-dir', default="tb",
+parser.add_argument('--tensorboard-dir', default="runs/t4_tb",
                     help='name of the tensorboard data directory')
 parser.add_argument('--checkpoint-interval', type=int, default=50,
                     help='checkpoint interval')
@@ -137,6 +138,16 @@ with tf.Session() as sess:
         training_loss_total = 0
         for x, y in tqdm(generator, total=n_train_batches,
                          desc=description, unit='batches'):
+            print("x_size:{0}  y_size:{1}".format(np.shape(x),np.shape(y)))
+            plt.imshow(x[0])
+            plt.show()
+            time.sleep(5)
+            plt.close()
+            plt.show()
+            plt.imshow(y[0,:,:,10])
+            plt.show()
+            time.sleep(100)
+
             feed = {net.image_input:  x,
                     labels:           y,
                     net.keep_prob:    0.5}
