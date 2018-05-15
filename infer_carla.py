@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+#-------------------------------------------------------------------------------
+# Author: David Rose <david010@gmail.com>
+# Date:   2018-05-14
+#-------------------------------------------------------------------------------
+
+
 import argparse
 import random
 import math
@@ -120,7 +127,6 @@ for i in range((3)):
 	cv2.imwrite(current_name, imgs[i, :, :, :])
 	cv2.imshow(current_name ,imgs[i, :, :, :])
 
-waott = input()
 
 
 

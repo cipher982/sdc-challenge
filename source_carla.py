@@ -117,10 +117,9 @@ class CarlaSource:
                     #print("Resizing image. . .")
                     image = cv2.resize(image, self.image_size)
                     label = cv2.resize(label, self.image_size)
-                    print("===About to imshow===")
+
                     plt.imshow(image)
-                    plt.imshow(label)
-                    #break
+
                     label_bg   = np.zeros([image.shape[0], image.shape[1]], dtype=bool)
                     label_list = []
                     for ldef in label_defs[1:]:
@@ -129,7 +128,7 @@ class CarlaSource:
                         label_list.append(label_current)
                         if ldef.name == 'Vehicles':
                             print("======================== {0}".format(f))
-                            print("label_current:{0}".format(sum(label_current)))
+                            print("label_current:{0}".format(label_current))
                             print("ldef:{0}  color:{1}".format(ldef,ldef.color))
 
                     label_bg   = ~label_bg
@@ -148,6 +147,7 @@ class CarlaSource:
                           names_images, names_labels
                 else:
                     yield np.array(images), np.array(labels)
+        # Return images/labels to feed into TensorFlow
         return gen_batch
 
 #-------------------------------------------------------------------------------

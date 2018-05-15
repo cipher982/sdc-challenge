@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #-------------------------------------------------------------------------------
-# Author: Lukasz Janyst <lukasz@jany.st>
-# Date:   14.06.2017
+# Author: Lukasz Janyst <lukasz@jany.st>, David Rose <david010@gmail.com>
+# Date:   2018-05-14
 #-------------------------------------------------------------------------------
 
 import argparse
@@ -22,7 +22,7 @@ from tqdm   import tqdm
 # Parse the commandline
 #-------------------------------------------------------------------------------
 parser = argparse.ArgumentParser(description='Train the FCN')
-parser.add_argument('--name', default='runs/t4',
+parser.add_argument('--name', default='runs/t5',
                     help='project name')
 parser.add_argument('--data-source', default='carla2',
                     help='data source')
@@ -30,11 +30,11 @@ parser.add_argument('--data-dir', default='D:\\data\\lyft',
                     help='data directory')
 parser.add_argument('--vgg-dir', default='vgg_graph',
                     help='directory for the VGG-16 model')
-parser.add_argument('--epochs', type=int, default=3,
+parser.add_argument('--epochs', type=int, default=50,
                     help='number of training epochs')
-parser.add_argument('--batch-size', type=int, default=1,
+parser.add_argument('--batch-size', type=int, default=20,
                     help='batch size')
-parser.add_argument('--tensorboard-dir', default="runs/t4_tb",
+parser.add_argument('--tensorboard-dir', default="runs/t5_tb",
                     help='name of the tensorboard data directory')
 parser.add_argument('--checkpoint-interval', type=int, default=50,
                     help='checkpoint interval')
@@ -49,14 +49,15 @@ print('[i] Batch size:           ', args.batch_size)
 print('[i] Tensorboard directory:', args.tensorboard_dir)
 print('[i] Checkpoint interval:  ', args.checkpoint_interval)
 
-args.name = args.name + "_" + str(int(time.time() * 10000000))
+args.name = args.name
 print(args.name)
 try:
     print('[i] Creating directory {0}...'.format(args.name))
     os.makedirs(args.name)
 except OSError:
     print("DIR exists error!")
-    sys.exit()
+    #os.system("rm -rf {0}".format(args.name))
+    os.makedirs(args.name)
 
 
 #-------------------------------------------------------------------------------
@@ -138,15 +139,15 @@ with tf.Session() as sess:
         training_loss_total = 0
         for x, y in tqdm(generator, total=n_train_batches,
                          desc=description, unit='batches'):
-            print("x_size:{0}  y_size:{1}".format(np.shape(x),np.shape(y)))
-            plt.imshow(x[0])
-            plt.show()
-            time.sleep(5)
-            plt.close()
-            plt.show()
-            plt.imshow(y[0,:,:,10])
-            plt.show()
-            time.sleep(100)
+        
+            #plt.imshow(cv2.cvtColor(x[0], cv2.COLOR_BGR2RGB))
+            #plt.show()
+            #time.sleep(5)
+            #plt.close()
+            #plt.imshow(cv2.cvtColor(y[0,:,:,10], cv2.COLOR_BGR2RGB))
+            #plt.show()
+            #time.sleep(100)
+        
 
             feed = {net.image_input:  x,
                     labels:           y,

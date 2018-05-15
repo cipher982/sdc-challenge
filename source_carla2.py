@@ -8,7 +8,8 @@ import cv2
 import os
 import time
 
-import numpy as np
+import numpy             as np
+import matplotlib.pyplot as plt
 
 from collections import namedtuple
 from glob import glob
@@ -84,8 +85,8 @@ class CarlaSource:
         :param valid_fraction: what franction of the dataset should be used
                                as a validation sample
         """
-        images = data_dir + '\\Train\\CameraSeg\\*.png'
-        labels = data_dir + '\\Train\\CameraRGB'
+        images = data_dir + '\\Train\\CameraRGB\\*.png'
+        labels = data_dir + '\\Train\\CameraSeg'
         #print(images)
 
         image_paths = glob(images)
@@ -139,10 +140,6 @@ class CarlaSource:
                         label_current  = np.all(label == ldef.color, axis=2)
                         label_bg      |= label_current
                         label_list.append(label_current)
-                        if ldef.name == 'Vehicles':
-                            print("======================== {0}".format(f))
-                            print("label shp:{0}".format((np.shape(label_current))))
-                            print("ldef:{0}  color:{1}".format(ldef,ldef.color))
 
                     label_bg   = ~label_bg
                     label_all  = np.dstack([label_bg, *label_list])
