@@ -7,6 +7,7 @@
 
 import argparse
 import random
+import time
 import math
 import sys
 import cv2
@@ -59,13 +60,12 @@ parser.add_argument('--data-source', default='carla',
                     help='data source')
 
 args = parser
-args.name        = 'runs\\t3'
+args.name        = 'runs\\t5'
 args.checkpoint  = -1
 args.video_file  = 'test_video.mp4'
 args.output_dir  = 'test_output'
 args.batch_size  = 31
 args.data_source = 'carla'
-
 
 state = tf.train.get_checkpoint_state(args.name)
 if state is None:
@@ -111,22 +111,29 @@ with tf.Session() as sess:
 
     n_sample_batches = int(math.ceil(len(video)/args.batch_size))
     description = '[i] Processing video'
+    frames = []
     for x in tqdm(generator, total=n_sample_batches, desc=description, unit='batches'):
         feed = {net.image_input:  x,
                 net.keep_prob:    1}
         img_labels = sess.run(net.classes, feed_dict=feed)
 
-        #binary_car_result = np.where()
-        imgs = draw_labels_batch(x, img_labels, label_colors, False)
-        print("imgs shape: {0},{1}".format(np.shape(imgs), type(imgs)))
+        for i in range(len(x)):
+        	road_mask, vehicle_mask = draw_binary_label(img_labels, label_colors)
+        	frames.append([road_mask, vehicle_mask])
 
-for i in range((3)):
-	#print(imgs[i, :, :, :])
-	current_name = 'C:/Users/david/documents/GitHub/sdc_challenge/testtt/' + str(random.randint(1,10001)) + '.png'
-	print('writing: {0}, shape: {1}'.format(current_name, np.shape(imgs[i, :, :, :])))
-	cv2.imwrite(current_name, imgs[i, :, :, :])
-	cv2.imshow(current_name ,imgs[i, :, :, :])
+answer_key = {}
+frame_ix = 1
+for frame in frames:
+	# Start frames at 1
+	road_mask    = frame[0].astype('uint8')
+	vehicle_mask = frame[1].astype('uint8')
+	print("\nRoad mask:{1},{2}\n{0}".format(road_mask, type(road_mask), np.shape(road_mask)))
+	answer_key[frame_ix] = [encode(road_mask), encode(vehicle_mask)]
+	frame_ix += 1
 
+
+# Print output in proper json format
+print (json.dumps(answer_key))
 
 
 

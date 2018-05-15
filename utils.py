@@ -9,7 +9,7 @@ import tensorflow as tf
 import numpy as np
 
 #-------------------------------------------------------------------------------
-def draw_labels(img, labels, label_colors, convert=True):
+def draw_labels(img, labels, label_colors, convert=False):
     """
     Draw the labels on top of the input image
     :param img:          the image being classified
@@ -19,25 +19,49 @@ def draw_labels(img, labels, label_colors, convert=True):
     """
     labels_colored = np.zeros_like(img)
     for label in label_colors:
-        label_mask = labels == label
-        labels_colored[label_mask] = label_colors[label]
-    img = cv2.addWeighted(img, 1, labels_colored, 0.8, 0)
+        #label_mask = labels == label
+        #print("\n\nlabel:{0}\n\n".format(label))
+        #print("avg:{0}".format(np.max(labels_colored)))
+        #print(labels_colored)
+
+        if label   ==  7: # Roads
+            road_mask = labels == label
+        elif label == 10: # Vehicles
+            vehicle_mask = labels == label
+
+    #img = cv2.addWeighted(img, 1, labels_colored, 0.8, 0)
+    img = cv2.addWeighted(img, 1, labels_colored, 1, 0)
+
     if not convert:
         return img
     return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
+def draw_binary_label(labels, label_colors):
+    """
+    Convert the TF output to labeled and encoded JSON data for Lyft
+    :param img: the image being classified
+    :param labels: network output
+    """
+    for label in label_colors:
+        if label   ==  7: # Roads
+            road_mask = labels == label
+        elif label == 10: # Vehicles
+            vehicle_mask = labels == label
+
+    return road_mask, vehicle_mask
+    
 #-------------------------------------------------------------------------------
 def draw_labels_batch(imgs, labels, label_colors, convert=True):
     """
     Perform `draw_labels` on all the images in the batch
     """
-    imgs_labelled = np.zeros_like(imgs)
+    imgs_labeled = np.zeros_like(imgs)
     for i in range(imgs.shape[0]):
-        imgs_labelled[i, :, :, :] = draw_labels(imgs[i,:, :, :],
-                                                labels[i, :, :],
-                                                label_colors,
-                                                convert)
-    return imgs_labelled
+        imgs_labeled[i, :, :, :] = draw_labels(imgs[i,:, :, :],
+                                               labels[i, :, :],
+                                               label_colors,
+                                               convert)
+    return imgs_labeled
 
 #-------------------------------------------------------------------------------
 def initialize_uninitialized_variables(sess):
