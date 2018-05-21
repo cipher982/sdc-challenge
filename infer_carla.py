@@ -56,7 +56,7 @@ parser.add_argument('--output-dir', default='test-output',
                     help='directory for the resulting images')
 parser.add_argument('--batch-size', type=int, default=10,
                     help='batch size')
-parser.add_argument('--data-source', default='carla',
+parser.add_argument('--data-source', default='carla2',
                     help='data source')
 
 args = parser
@@ -65,16 +65,16 @@ args.checkpoint  = -1
 args.video_file  = 'test_video.mp4'
 args.output_dir  = 'test_output'
 args.batch_size  = 31
-args.data_source = 'carla'
+args.data_source = 'carla2'
 
 state = tf.train.get_checkpoint_state(args.name)
 if state is None:
-    print('[!] No network state found in ' + args.name)
+    #print('[!] No network state found in ' + args.name)
     sys.exit(1)
 
 try:
     checkpoint_file = state.all_model_checkpoint_paths[args.checkpoint]
-    print("Loaded checkpoint: {0}".format(checkpoint_file))
+    #print("Loaded checkpoint: {0}".format(checkpoint_file))
 except IndexError:
     print('[!] Cannot find checkpoint ' + str(args.checkpoint_file))
     sys.exit(1)
@@ -85,7 +85,8 @@ if not os.path.exists(metagraph_file):
     print('[!] Cannot find metagraph ' + metagraph_file)
     sys.exit(1)
 else:
-    print('Loaded metagraph:  {0}'.format(metagraph_file))
+    #print('Loaded metagraph:  {0}'.format(metagraph_file))
+    2+2
 
 
 try:
@@ -95,12 +96,14 @@ except (ImportError, AttributeError, RuntimeError) as e:
     print('[!] Unable to load data source:', str(e))
     sys.exit(1)
 
-video = skvideo.io.vread(args.video_file)
+
+file = sys.argv[-1]
+video = skvideo.io.vread(file)
 
 global imgs
 
 with tf.Session() as sess:
-    print('[i] Creating the model...')
+    #print('[i] Creating the model...')
     net = FCNVGG(sess)
     net.build_from_metagraph(metagraph_file, checkpoint_file)
 
@@ -112,13 +115,15 @@ with tf.Session() as sess:
     n_sample_batches = int(math.ceil(len(video)/args.batch_size))
     description = '[i] Processing video'
     frames = []
-    for x in tqdm(generator, total=n_sample_batches, desc=description, unit='batches'):
+    #for x in tqdm(generator, total=n_sample_batches, desc=description, unit='batches'):
+    for x in generator:
         feed = {net.image_input:  x,
                 net.keep_prob:    1}
         img_labels = sess.run(net.classes, feed_dict=feed)
 
-        for i in range(len(x)):
-        	road_mask, vehicle_mask = draw_binary_label(img_labels, label_colors)
+        #print("\ntype(x):{0} np.shape(x):{1}\n\n\n".format(type(img_labels), np.shape(img_labels)))
+        for i in range(args.batch_size):
+        	road_mask, vehicle_mask = draw_binary_label(img_labels[i], label_colors)
         	frames.append([road_mask, vehicle_mask])
 
 answer_key = {}
@@ -127,14 +132,11 @@ for frame in frames:
 	# Start frames at 1
 	road_mask    = frame[0].astype('uint8')
 	vehicle_mask = frame[1].astype('uint8')
-	print("\nRoad mask:{1},{2}\n{0}".format(road_mask, type(road_mask), np.shape(road_mask)))
+	#print("\nroad_maskType:{0}, shape:{1}".format(type(road_mask), np.shape(road_mask)))
 	answer_key[frame_ix] = [encode(road_mask), encode(vehicle_mask)]
 	frame_ix += 1
 
-
-# Print output in proper json format
 print (json.dumps(answer_key))
-
 
 
 

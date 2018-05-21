@@ -130,6 +130,7 @@ with tf.Session() as sess:
     validation_img_summary_ops = [validation_img_summary_op,
                                   validation_img_gt_summary_op]
 
+
     for e in range(args.epochs):
         #-----------------------------------------------------------------------
         # Train
