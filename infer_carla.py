@@ -16,6 +16,7 @@ import os
 import tensorflow        as tf
 import numpy             as np
 import matplotlib.pyplot as plt
+import pandas            as pd
 
 from fcnvgg import FCNVGG
 from utils  import *
@@ -29,13 +30,18 @@ from PIL import Image
 from io  import BytesIO, StringIO
 
 def sample_generator(video, image_size, batch_size):
+    #print("Starting sample_generator. . .")
     for offset in range(0, len(video), batch_size):
+        #rint("\n\n\n\n\n\n\noffset:{0}".format(offset))
+        #print("len(video):{0}".format(len(video)))
+        #print("batch_size:{0}".format(batch_size))
         files = video[offset:offset+batch_size]
         images = []
-        for frame in video:
+        for frame in files:
             image = cv2.resize(frame, image_size)
             images.append(image.astype(np.float32))
             #names.append(os.path.basename(image_file))
+        #print("images shape:{0}".format(np.shape(images)))
         yield np.array(images)
 
 def encode(array):
@@ -43,7 +49,6 @@ def encode(array):
 	buff = BytesIO()
 	pil_img.save(buff, format="PNG")
 	return base64.b64encode(buff.getvalue()).decode("utf-8")
-
 
 parser = argparse.ArgumentParser(description='Generate data based on a model')
 parser.add_argument('--name', default='test',
@@ -60,16 +65,17 @@ parser.add_argument('--data-source', default='carla2',
                     help='data source')
 
 args = parser
-args.name        = 'runs\\t5'
+args.name        = '/home/runs/t5'
+#args.name        = 'runs/t5'
 args.checkpoint  = -1
 args.video_file  = 'test_video.mp4'
 args.output_dir  = 'test_output'
-args.batch_size  = 31
+args.batch_size  = 20
 args.data_source = 'carla2'
 
 state = tf.train.get_checkpoint_state(args.name)
 if state is None:
-    #print('[!] No network state found in ' + args.name)
+    print('[!] No network state found in ' + args.name)
     sys.exit(1)
 
 try:
@@ -96,12 +102,14 @@ except (ImportError, AttributeError, RuntimeError) as e:
     print('[!] Unable to load data source:', str(e))
     sys.exit(1)
 
-
+#print(0)
 file = sys.argv[-1]
 video = skvideo.io.vread(file)
+#video = np.load("woo2.npy")
+#print("\n\n\nSize of video is:{0}\n\n\n".format(np.shape(video)))
 
 global imgs
-
+#print(1)
 with tf.Session() as sess:
     #print('[i] Creating the model...')
     net = FCNVGG(sess)
@@ -112,11 +120,13 @@ with tf.Session() as sess:
     #---------------------------------------------------------------------------
     generator = sample_generator(video, source.image_size, args.batch_size)
 
+
     n_sample_batches = int(math.ceil(len(video)/args.batch_size))
     description = '[i] Processing video'
     frames = []
     #for x in tqdm(generator, total=n_sample_batches, desc=description, unit='batches'):
     for x in generator:
+        #print("\n\n\nSize of x is:{0}\n\n\n".format(np.shape(x)))
         feed = {net.image_input:  x,
                 net.keep_prob:    1}
         img_labels = sess.run(net.classes, feed_dict=feed)

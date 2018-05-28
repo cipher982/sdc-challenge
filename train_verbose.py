@@ -22,7 +22,7 @@ from tqdm   import tqdm
 # Parse the commandline
 #-------------------------------------------------------------------------------
 parser = argparse.ArgumentParser(description='Train the FCN')
-parser.add_argument('--name', default='runs/t7',
+parser.add_argument('--name', default='runs/t5',
                     help='project name')
 parser.add_argument('--data-source', default='carla2',
                     help='data source')
@@ -140,6 +140,16 @@ with tf.Session() as sess:
         training_loss_total = 0
         for x, y in tqdm(generator, total=n_train_batches,
                          desc=description, unit='batches'):
+        
+            #plt.imshow(cv2.cvtColor(x[0], cv2.COLOR_BGR2RGB))
+            #plt.show()
+            #time.sleep(5)
+            #plt.close()
+            #plt.imshow(cv2.cvtColor(y[0,:,:,10], cv2.COLOR_BGR2RGB))
+            #plt.show()
+            #time.sleep(100)
+        
+
             feed = {net.image_input:  x,
                     labels:           y,
                     net.keep_prob:    0.5}
