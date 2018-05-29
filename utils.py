@@ -36,17 +36,20 @@ def draw_labels(img, labels, label_colors, convert=False):
         return img
     return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-def draw_binary_label(labels, label_colors):
+def draw_binary_label(tf_img, label_colors, resize=True):
     """
     Convert the TF output to labeled and encoded JSON data for Lyft
-    :param img: the image being classified
-    :param labels: network output
+    :param tf_img: the image being classified
+    :param label_colors: RGB values of labels (source specific)
     """
     for label in label_colors:
+        #print("color:{0}".format(color))
         if label   ==  7: # Roads
-            road_mask = labels == label
+            road_mask = tf_img == label
         elif label == 10: # Vehicles
-            vehicle_mask = labels == label
+            vehicle_mask = tf_img == label
+
+
 
     return road_mask, vehicle_mask
     

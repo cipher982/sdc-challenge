@@ -65,8 +65,8 @@ parser.add_argument('--data-source', default='carla2',
                     help='data source')
 
 args = parser
-args.name        = '/home/runs/t5'
-#args.name        = 'runs/t5'
+#args.name        = '/home/runs/t5'
+args.name        = 'runs/t5'
 args.checkpoint  = -1
 args.video_file  = 'test_video.mp4'
 args.output_dir  = 'test_output'
@@ -103,9 +103,9 @@ except (ImportError, AttributeError, RuntimeError) as e:
     sys.exit(1)
 
 #print(0)
-file = sys.argv[-1]
-video = skvideo.io.vread(file)
-#video = np.load("woo2.npy")
+#file = sys.argv[-1]
+#video = skvideo.io.vread(file)
+video = np.load("woo2.npy")
 #print("\n\n\nSize of video is:{0}\n\n\n".format(np.shape(video)))
 
 global imgs
@@ -122,7 +122,7 @@ with tf.Session() as sess:
 
 
     n_sample_batches = int(math.ceil(len(video)/args.batch_size))
-    description = '[i] Processing video'
+    #description = '[i] Processing video'
     frames = []
     #for x in tqdm(generator, total=n_sample_batches, desc=description, unit='batches'):
     for x in generator:
@@ -133,8 +133,12 @@ with tf.Session() as sess:
 
         #print("\ntype(x):{0} np.shape(x):{1}\n\n\n".format(type(img_labels), np.shape(img_labels)))
         for i in range(len(img_labels)):
-            #print(i)
-            road_mask, vehicle_mask = draw_binary_label(img_labels[i], label_colors)
+            #print("\n\nimg_labeled:{0}".format(np.shape(img_labels[i])))
+            #print(img_labels[i])
+            #print("\n\n")
+            labeled_resized = cv2.resize(img_labels[i], (800, 600), interpolation=cv2.INTER_NEAREST)
+            road_mask, vehicle_mask = draw_binary_label(labeled_resized, label_colors)
+            #print("road_mask:{0}".format(np.shape(road_mask)))
             frames.append([road_mask, vehicle_mask])
 
 answer_key = {}
@@ -147,7 +151,7 @@ for frame in frames:
 	answer_key[frame_ix] = [encode(road_mask), encode(vehicle_mask)]
 	frame_ix += 1
 
-print (json.dumps(answer_key))
+#print(json.dumps(answer_key))
 
 
 

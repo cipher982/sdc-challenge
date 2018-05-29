@@ -32,6 +32,7 @@ for rgb_frame in video:
     
     # Look for road :)
 	binary_road_result = binary_car_result = np.where(red<20,1,0).astype('uint8')
+	print("binary_road_result shape:{0}".format(np.shape(binary_road_result)))
 
 	answer_key[frame] = [encode(binary_car_result), encode(binary_road_result)]
     
@@ -39,4 +40,4 @@ for rgb_frame in video:
 	frame+=1
 
 # Print output in proper json format
-print (json.dumps(answer_key))
+#print (json.dumps(answer_key))
