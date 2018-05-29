@@ -126,15 +126,16 @@ with tf.Session() as sess:
     frames = []
     #for x in tqdm(generator, total=n_sample_batches, desc=description, unit='batches'):
     for x in generator:
-        #print("\n\n\nSize of x is:{0}\n\n\n".format(np.shape(x)))
+        #print("\nSize of x is:{0}".format(np.shape(x)))
         feed = {net.image_input:  x,
                 net.keep_prob:    1}
         img_labels = sess.run(net.classes, feed_dict=feed)
 
         #print("\ntype(x):{0} np.shape(x):{1}\n\n\n".format(type(img_labels), np.shape(img_labels)))
-        for i in range(args.batch_size):
-        	road_mask, vehicle_mask = draw_binary_label(img_labels[i], label_colors)
-        	frames.append([road_mask, vehicle_mask])
+        for i in range(len(img_labels)):
+            #print(i)
+            road_mask, vehicle_mask = draw_binary_label(img_labels[i], label_colors)
+            frames.append([road_mask, vehicle_mask])
 
 answer_key = {}
 frame_ix = 1
