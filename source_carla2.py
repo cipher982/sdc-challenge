@@ -132,13 +132,25 @@ class CarlaSource:
                     #print("loading image. . .")
                     image = cv2.imread(image_file)
                     label = cv2.imread(label_file)
-                    
+
+                    #num, bins = np.histogram(label)
+                    #u, c = np.unique(label, return_counts=True)
+                    #print(np.stack([u, c]).T)
+                    #plt.bar(bins[:-1], num)
+                    #plt.show()
+
                     if training == True:
-                        print("prepping.............")
+                        #print("prepping.............")
                         label = preprocess_labels(label)
-                    print("\n=======Label after==========")
-                    print(np.shape(label))
-                    print(label)
+                    #print("\n=======Label after==========")
+                    #print(np.shape(label))
+                    #print(label)
+
+                    #u, c = np.unique(label, return_counts=True)
+                    #print(np.stack([u, c]).T)
+                    #num, bins = np.histogram(label)
+                    #plt.bar(bins[:-1], num)
+                    #plt.show()
 
 
                     #print("Resizing image. . .")
@@ -148,11 +160,21 @@ class CarlaSource:
                     label_bg   = np.zeros([image.shape[0], image.shape[1]], dtype=bool)
                     label_list = []
                     for ldef in label_defs[1:]:
-                        label_current  = np.all(label == ldef.color, axis=2)
+                        #print("\n========================")
+                        #print("ldef:{0}".format(ldef))
+                        #print("label:{0}".format(label))
+                        #print("ldef.color[2]:{0}".format(ldef.color[2]))
+                        label_current  = label == ldef.color[2]
+                        #print("label_current(shape):{0}".format(np.shape(label_current)))
+                        #print(label_current)
                         label_bg      |= label_current
+                        #print("label_bg:{0}".format(np.shape(label_bg)))
                         label_list.append(label_current)
+                        #print("label_list:{0}\n".format(np.shape(label_list)))
+                        #print()
 
                     label_bg   = ~label_bg
+                    #print("label_bg:{0} label_list:{1}".format(np.shape(label_bg), np.shape(label_list)))
                     label_all  = np.dstack([label_bg, *label_list])
                     label_all  = label_all.astype(np.float32)
 
