@@ -103,9 +103,9 @@ except (ImportError, AttributeError, RuntimeError) as e:
     sys.exit(1)
 
 #print(0)
-#file = sys.argv[-1]
-#video = skvideo.io.vread(file)
-video = np.load("woo2.npy")
+file = sys.argv[-1]
+video = skvideo.io.vread(file)
+#video = np.load("woo2.npy")
 #print("\n\n\nSize of video is:{0}\n\n\n".format(np.shape(video)))
 
 global imgs
@@ -134,9 +134,11 @@ with tf.Session() as sess:
         #print("\ntype(x):{0} np.shape(x):{1}\n\n\n".format(type(img_labels), np.shape(img_labels)))
         for i in range(len(img_labels)):
             #print("\n\nimg_labeled:{0}".format(np.shape(img_labels[i])))
-            #print(img_labels[i])
+            print(img_labels[i])
             #print("\n\n")
             labeled_resized = cv2.resize(img_labels[i], (800, 600), interpolation=cv2.INTER_NEAREST)
+            print("---------")
+            print(labeled_resized)
             road_mask, vehicle_mask = draw_binary_label(labeled_resized, label_colors)
             #print("road_mask:{0}".format(np.shape(road_mask)))
             frames.append([road_mask, vehicle_mask])

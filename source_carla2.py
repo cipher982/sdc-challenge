@@ -12,7 +12,8 @@ import numpy             as np
 import matplotlib.pyplot as plt
 
 from collections import namedtuple
-from glob import glob
+from glob        import glob
+from utils       import *
 
 #-------------------------------------------------------------------------------
 # Labels
@@ -66,7 +67,9 @@ def build_file_list(images_root, labels_root):
 class CarlaSource:
     #---------------------------------------------------------------------------
     def __init__(self):
-        self.image_size      = (416, 320)
+        #self.image_size      = (416, 320)
+        self.image_size      = (224, 160)
+
         self.num_classes     = len(label_defs)
 
         self.label_colors    = {i: np.array(l.color) for i, l \
@@ -78,7 +81,7 @@ class CarlaSource:
         self.valid_generator = None
 
     #---------------------------------------------------------------------------
-    def load_data(self, data_dir, valid_fraction):
+    def load_data(self, data_dir, valid_fraction, trainingYes=False):
         """
         Load the data and make the generators
         :param data_dir:       the directory where the dataset's file are stored
@@ -110,7 +113,7 @@ class CarlaSource:
         self.valid_generator = self.batch_generator(valid_images)       
 
     #---------------------------------------------------------------------------
-    def batch_generator(self, image_paths):
+    def batch_generator(self, image_paths, training=True):
         def gen_batch(batch_size, names=False):
             random.shuffle(image_paths)
             for offset in range(0, len(image_paths), batch_size):
@@ -129,6 +132,18 @@ class CarlaSource:
                     #print("loading image. . .")
                     image = cv2.imread(image_file)
                     label = cv2.imread(label_file)
+                    
+                    print("\n=======Label before=========")
+                    print(np.shape(label))
+                    print(np.shape(image))
+                    print(label)
+                    if training == True:
+                        print("prepping.............")
+                        label = preprocess_labels(label)
+                    print("\n=======Label after+=========")
+                    print(np.shape(label))
+                    print(label)
+
 
                     #print("Resizing image. . .")
                     image = cv2.resize(image, self.image_size)

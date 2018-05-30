@@ -30,7 +30,7 @@ parser.add_argument('--data-dir', default='D:\\data\\lyft',
                     help='data directory')
 parser.add_argument('--vgg-dir', default='vgg_graph',
                     help='directory for the VGG-16 model')
-parser.add_argument('--epochs', type=int, default=50,
+parser.add_argument('--epochs', type=int, default=10,
                     help='number of training epochs')
 parser.add_argument('--batch-size', type=int, default=20,
                     help='batch size')
@@ -58,7 +58,6 @@ except OSError:
     print("DIR exists error!")
     #os.system("rm -rf {0}".format(args.name))
     os.makedirs(args.name)
-
 
 #-------------------------------------------------------------------------------
 # Configure the data source
