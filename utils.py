@@ -12,13 +12,13 @@ import numpy      as np
 
 def preprocess_labels(label_image):
     # Create a new single channel label image to modify
-    labels_new = np.copy(label_image[:,:,0])
+    labels_new = np.copy(label_image[:,:,2])
     # Identify lane marking pixels (label is 6)
-    lane_marking_pixels = (label_image[:,:,0] == 6).nonzero()
+    lane_marking_pixels = (label_image[:,:,2] == 6).nonzero()
     # Set lane marking pixels to road (label is 7)
     labels_new[lane_marking_pixels] = 7
     # Identify all vehicle pixels
-    vehicle_pixels = (label_image[:,:,0] == 10).nonzero()
+    vehicle_pixels = (label_image[:,:,2] == 10).nonzero()
     # Isolate vehicle pixels associated with the hood (y-position > 496)
     hood_indices = (vehicle_pixels[0] >= 496).nonzero()[0]
     hood_pixels = (vehicle_pixels[0][hood_indices], \

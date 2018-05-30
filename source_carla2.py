@@ -133,7 +133,6 @@ class CarlaSource:
                     image = cv2.imread(image_file)
                     label = cv2.imread(label_file)
                     
-                    label = label[:,:,2]
                     if training == True:
                         print("prepping.............")
                         label = preprocess_labels(label)
