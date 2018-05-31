@@ -28,23 +28,42 @@ def preprocess_labels(label_image):
     # Return the preprocessed label image 
     return labels_new
 
+def draw_labels(img, labels, label_colors, convert=True):
+    """
+    Draw the labels on top of the input image
+    :param img:          the image being classified
+    :param labels:       the output of the neural network
+    :param label_colors: the label color map defined in the source
+    :param convert:      should the output be converted to RGB
+    """
+    labels_colored = np.zeros_like(img)
+    for label in label_colors:
+        label_mask = labels == label
+        labels_colored[label_mask] = label_colors[label]
+    img = cv2.addWeighted(img, 1, labels_colored, 0.8, 0)
+    if not convert:
+        return img
+    return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
 def draw_binary_label(base_img, tf_img, label_colors, resize=True):
     """
     Convert the TF output to labeled and encoded JSON data for Lyft
-    :param tf_img: the image being classified
+    :param base_img:     the image input to TF
+    :param tf_img:       the image labeled output from TF
     :param label_colors: RGB values of labels (source specific)
     """
     for label in label_colors:
-        print("label:{0}".format(label))
+        #print("label:{0}".format(label))
         if label   ==  7: # Roads
-            print("label:7, roads. . .")
+            #print("label:7, roads. . .")
             road_mask = tf_img == label
         elif label == 10: # Vehicles
-            print("label:10, vehicles. . .")
+            #print("label:10, vehicles. . .")
             vehicle_mask = tf_img == label
-            print(vehicle_mask)
+            #print(vehicle_mask)
 
-    colored = cv2.addWeighted(img, 1, labels_colored, 1, 0)
+    print("base_img:{0}  tf_img:{1}".format(np.shape(base_img), np.shape(tf_img)))
+    colored = cv2.addWeighted(base_img, 1, tf_img, 0.8, 0)
 
     return road_mask, vehicle_mask, colored
     

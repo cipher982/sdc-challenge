@@ -22,7 +22,7 @@ from tqdm   import tqdm
 # Parse the commandline
 #-------------------------------------------------------------------------------
 parser = argparse.ArgumentParser(description='Train the FCN')
-parser.add_argument('--name', default='runs/t7',
+parser.add_argument('--name', default='runs/t8',
                     help='project name')
 parser.add_argument('--data-source', default='carla2',
                     help='data source')
@@ -30,13 +30,13 @@ parser.add_argument('--data-dir', default='D:\\data\\lyft',
                     help='data directory')
 parser.add_argument('--vgg-dir', default='vgg_graph',
                     help='directory for the VGG-16 model')
-parser.add_argument('--epochs', type=int, default=10,
+parser.add_argument('--epochs', type=int, default=150,
                     help='number of training epochs')
-parser.add_argument('--batch-size', type=int, default=20,
+parser.add_argument('--batch-size', type=int, default=40,
                     help='batch size')
-parser.add_argument('--tensorboard-dir', default="runs/t5_tb",
+parser.add_argument('--tensorboard-dir', default="runs/t8_tb",
                     help='name of the tensorboard data directory')
-parser.add_argument('--checkpoint-interval', type=int, default=50,
+parser.add_argument('--checkpoint-interval', type=int, default=25,
                     help='checkpoint interval')
 args = parser.parse_args()
 
@@ -174,6 +174,7 @@ with tf.Session() as sess:
         #-----------------------------------------------------------------------
         # Write loss summary
         #-----------------------------------------------------------------------
+        print("Training Loss : {0}    Validation Loss :{1}".format(training_loss_total, validation_loss_total))
         feed = {validation_loss: validation_loss_total,
                 training_loss:   training_loss_total}
         loss_summary = sess.run([validation_loss_summary_op,
@@ -186,7 +187,7 @@ with tf.Session() as sess:
         #-----------------------------------------------------------------------
         # Write image summary every 5 epochs
         #-----------------------------------------------------------------------
-        if e % 2 == 0:
+        if e % 1 == 0:
             imgs_inferred = draw_labels_batch(imgs, img_labels, label_colors)
             imgs_gt       = draw_labels_batch(imgs, img_labels_gt, label_colors)
 
