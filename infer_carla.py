@@ -66,11 +66,11 @@ parser.add_argument('--data-source', default='carla2',
 
 args = parser
 #args.name        = '/home/runs/t5'
-args.name        = 'runs/t5'
+args.name        = 'runs/t10'
 args.checkpoint  = -1
 args.video_file  = 'test_video.mp4'
 args.output_dir  = 'test_output'
-args.batch_size  = 20
+args.batch_size  = 5
 args.data_source = 'carla2'
 
 state = tf.train.get_checkpoint_state(args.name)
@@ -104,8 +104,8 @@ except (ImportError, AttributeError, RuntimeError) as e:
 
 #print(0)
 file = sys.argv[-1]
-video = skvideo.io.vread(file)
-#video = np.load("woo2.npy")
+#video = skvideo.io.vread(file)
+video = np.load("woo2.npy")
 #print("\n\n\nSize of video is:{0}\n\n\n".format(np.shape(video)))
 
 global imgs
@@ -136,7 +136,12 @@ with tf.Session() as sess:
             #print("\n\nimg_labeled:{0}".format(np.shape(img_labels[i])))
             #print(img_labels[i])
             #print("\n\n")
+            #plt.imshow(img_labels[i])
+            #plt.show()
             labeled_resized = cv2.resize(img_labels[i], (800, 600), interpolation=cv2.INTER_NEAREST)
+            print(labeled_resized)
+            plt.imshow(labeled_resized)
+            plt.show()
             #print("\n--------------------------")
             #print(np.shape(labeled_resized))
             #print(np.shape(x[i]))
@@ -148,7 +153,14 @@ with tf.Session() as sess:
             #cv2.waitKey(0)
             #plt.imshow(labeled_resized)
             #plt.show()
-            road_mask, vehicle_mask = draw_binary_label(x[i], labeled_resized, label_colors)
+            xi_resized = cv2.resize(x[i], (800, 600), interpolation=cv2.INTER_NEAREST)
+            print("xi_resized! oh and labeled_resized is:{0}".format(np.shape(labeled_resized)))
+            plt.imshow(255 - xi_resized)
+            plt.show()
+            road_mask, vehicle_mask, colored = draw_binary_label(xi_resized, labeled_resized, label_colors)
+            #print("colored!!!")
+            #plt.imshow(colored)
+            #plt.show()
             #print("road_mask:{0}".format(np.shape(road_mask)))
             frames.append([road_mask, vehicle_mask])
 

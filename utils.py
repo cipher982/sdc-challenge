@@ -4,9 +4,11 @@
 #-------------------------------------------------------------------------------
 
 import cv2
+import scipy.misc
 
-import tensorflow as tf
-import numpy      as np
+import tensorflow        as tf
+import numpy             as np
+import matplotlib.pyplot as plt
 
 #-------------------------------------------------------------------------------
 
@@ -26,7 +28,12 @@ def preprocess_labels(label_image):
     # Set hood pixel labels to 0
     labels_new[hood_pixels] = 0
     # Return the preprocessed label image 
-    return labels_new
+    return labels_new[200:, :]
+
+def preprocess_images(image):
+    # Create a new single channel label image to modify
+    return image[200:, :]
+    
 
 def draw_labels(img, labels, label_colors, convert=True):
     """
@@ -62,8 +69,17 @@ def draw_binary_label(base_img, tf_img, label_colors, resize=True):
             vehicle_mask = tf_img == label
             #print(vehicle_mask)
 
-    print("base_img:{0}  tf_img:{1}".format(np.shape(base_img), np.shape(tf_img)))
-    colored = cv2.addWeighted(base_img, 1, tf_img, 0.8, 0)
+    cmap = plt.cm.jet
+    norm = plt.Normalize(vmin=tf_img.min(), vmax=tf_img.max())
+
+    # map the normalized data to colors
+    # image is now RGBA (512x512x4) 
+    rgba_label = scipy.misc.toimage(norm(tf_img))
+    plt.imshow(rgba_label)
+    plt.show()
+    print("base_img:{0}  tf_img:{1}".format(np.shape(base_img), np.shape(rgba_label)))
+    #colored = cv2.addWeighted(base_img.astype('uint8'), 1, rgba_label, 0.8, 0)
+    colored = 2
 
     return road_mask, vehicle_mask, colored
     

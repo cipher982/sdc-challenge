@@ -68,7 +68,7 @@ class CarlaSource:
     #---------------------------------------------------------------------------
     def __init__(self):
         #self.image_size      = (416, 320)
-        self.image_size      = (224, 160)
+        self.image_size      = (640, 320)
 
         self.num_classes     = len(label_defs)
 
@@ -141,6 +141,7 @@ class CarlaSource:
 
                     if training == True:
                         #print("prepping.............")
+                        image = preprocess_images(image)
                         label = preprocess_labels(label)
                     #print("\n=======Label after==========")
                     #print(np.shape(label))

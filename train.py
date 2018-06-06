@@ -18,11 +18,13 @@ from fcnvgg import FCNVGG
 from utils  import *
 from tqdm   import tqdm
 
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
+
 #-------------------------------------------------------------------------------
 # Parse the commandline
 #-------------------------------------------------------------------------------
 parser = argparse.ArgumentParser(description='Train the FCN')
-parser.add_argument('--name', default='runs/t8',
+parser.add_argument('--name', default='runs/t10',
                     help='project name')
 parser.add_argument('--data-source', default='carla2',
                     help='data source')
@@ -30,11 +32,11 @@ parser.add_argument('--data-dir', default='D:\\data\\lyft',
                     help='data directory')
 parser.add_argument('--vgg-dir', default='vgg_graph',
                     help='directory for the VGG-16 model')
-parser.add_argument('--epochs', type=int, default=150,
+parser.add_argument('--epochs', type=int, default=100,
                     help='number of training epochs')
-parser.add_argument('--batch-size', type=int, default=40,
+parser.add_argument('--batch-size', type=int, default=5,
                     help='batch size')
-parser.add_argument('--tensorboard-dir', default="runs/t8_tb",
+parser.add_argument('--tensorboard-dir', default="runs/t10_tb",
                     help='name of the tensorboard data directory')
 parser.add_argument('--checkpoint-interval', type=int, default=25,
                     help='checkpoint interval')
